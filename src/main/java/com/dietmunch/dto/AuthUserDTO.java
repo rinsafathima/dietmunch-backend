@@ -22,4 +22,6 @@ AuthUserDTO {
 
     private String role;
 
+    private int age;
+
 }

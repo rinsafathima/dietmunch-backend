@@ -1,7 +1,7 @@
 package com.dietmunch.controller;
 
 import com.dietmunch.dto.AuthUserDTO;
-import com.dietmunch.model.Users;
+import com.dietmunch.entity.Users;
 import com.dietmunch.repo.UserRpo;
 import com.dietmunch.utill.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +10,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+@CrossOrigin
 @RestController
-@RequestMapping("/user")
+@RequestMapping("api/v1/user")
 public class UserController {
 
     @Autowired
     private UserRpo userRepo;
 
-    @PostMapping("/register")
+    @PostMapping("/register-user")
     public ResponseEntity<StandardResponse> getUserInformation(@RequestBody Users user){
         try {
             List<Users> prevUser = userRepo.findAllByEmail(user.getEmail());
@@ -41,8 +40,8 @@ public class UserController {
             } else {
                 //return "User is already registered";
                 return new ResponseEntity<>(
-                        new StandardResponse(200, "User is already registered", null),
-                        HttpStatus.NOT_FOUND);
+                        new StandardResponse(404, "User is already registered", null),
+                        HttpStatus.BAD_REQUEST);
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -50,7 +49,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("login")
+    @GetMapping("/login")
     public ResponseEntity<StandardResponse> authorizedUser(@RequestParam(value = "email") String username,
                                                            @RequestParam(value = "pws") String password){
         try {
@@ -84,6 +83,8 @@ public class UserController {
             authUserDTO.setEmail(user.getEmail());
             authUserDTO.setRole(user.getRole());
             authUserDTO.setMobileNumber(user.getMobileNumber());
+            authUserDTO.setAge(user.getAge());
+
 
             return new ResponseEntity<>(
                     new StandardResponse(200, "Login successful", authUserDTO),
@@ -98,7 +99,7 @@ public class UserController {
         }
         }
         @GetMapping("/get-all-users")
-        public List <AuthUserDTO> getAllUsers(){
+        public ResponseEntity<StandardResponse> getAllUsers(){
 
         List<Users> userList  = userRepo.findAll();
         List <AuthUserDTO> authUserList = new ArrayList<>();
@@ -112,12 +113,15 @@ public class UserController {
             authUser.setId(userList.get(i).getId());
             authUser.setEmail(userList.get(i).getEmail());
             authUser.setMobileNumber(userList.get(i).getMobileNumber());
+            authUser.setAge(userList.get(i).getAge());
 
             authUserList.add(authUser);
 
         }
 
-
-            return authUserList;
+            return new ResponseEntity<>(
+                    new StandardResponse(200, "All users", authUserList),
+                    HttpStatus.OK);
+//            return authUserList;
         }
 }

@@ -1,6 +1,6 @@
 package com.dietmunch.repo;
 
-import com.dietmunch.entity.Users;
+import com.dietmunch.entity.Nutritionist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
@@ -9,10 +9,8 @@ import java.util.List;
 
 @Repository
 @EnableJpaRepositories
-public interface UserRpo extends JpaRepository<Users, Integer> {
+public interface NutritionistRpo extends JpaRepository<Nutritionist,Integer> {
 
-    List<Users> findAllByEmail(String email);
-
-    List<Users> findAll();
+    List<Nutritionist> findAllByNutritionistName(String nutritionistName);
 
 }
