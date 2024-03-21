@@ -124,4 +124,19 @@ public class UserController {
                     HttpStatus.OK);
 //            return authUserList;
         }
+
+    @DeleteMapping("/delete-user/{id}")
+    public ResponseEntity<StandardResponse> deleteUser(@PathVariable Integer id) {
+        try {
+            userRepo.deleteById(id);
+            return new ResponseEntity<>(
+                    new StandardResponse(200, "User deleted successfully", null),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(
+                    new StandardResponse(500, "Internal Server Error", null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
