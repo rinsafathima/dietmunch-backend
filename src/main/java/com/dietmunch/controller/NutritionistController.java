@@ -71,5 +71,23 @@ public class NutritionistController {
         }
 
     }
+    @DeleteMapping("/delete-nutritionist/{id}")
+    public ResponseEntity<StandardResponse> deleteNutritionist(@PathVariable Integer id) {
+        try {
+            if (nutritionistRpo.existsById(id)) {
+                nutritionistRpo.deleteById(id);
+                return new ResponseEntity<>(
+                        new StandardResponse(200, "Nutritionist deleted successfully", null),
+                        HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(
+                        new StandardResponse(404, "Nutritionist not found", null),
+                        HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

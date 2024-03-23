@@ -71,4 +71,23 @@ public class AppointmentController {
                 new StandardResponse(200, "All appointments",appointmentsList ),
                 HttpStatus.OK);
     }
+    @DeleteMapping("/delete-appointment/{id}")
+    public ResponseEntity<StandardResponse> deleteAppointment(@PathVariable Integer id) {
+        try {
+            if (appointmentRpo.existsById(id)) {
+                appointmentRpo.deleteById(id);
+                return new ResponseEntity<>(
+                        new StandardResponse(200, "Appointment deleted successfully", null),
+                        HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(
+                        new StandardResponse(404, "Appointment not found", null),
+                        HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
 }
