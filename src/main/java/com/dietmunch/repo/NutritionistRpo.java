@@ -12,5 +12,7 @@ import java.util.List;
 public interface NutritionistRpo extends JpaRepository<Nutritionist,Integer> {
 
     List<Nutritionist> findAllByNutritionistName(String nutritionistName);
+    void deleteById(Integer id);
+
 
 }
