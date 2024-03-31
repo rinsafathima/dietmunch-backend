@@ -107,6 +107,19 @@ public class MealPlanController {
         }
 
     }
-
+    @DeleteMapping("/delete-meal-plan")
+    public ResponseEntity<StandardResponse> deleteMealPlan(@RequestParam (value = "id") int id) {
+        try {
+            mealPlanRpo.deleteById(id);
+            return new ResponseEntity<>(
+                    new StandardResponse(200, "Meal plan successfully deleted", null),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(
+                    new StandardResponse(500, "Error deleting meal plan", null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

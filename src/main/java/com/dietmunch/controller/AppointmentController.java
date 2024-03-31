@@ -1,6 +1,7 @@
 package com.dietmunch.controller;
 
 import com.dietmunch.dto.AppointmentDTO;
+import com.dietmunch.dto.UpdateNutritionistDTO;
 import com.dietmunch.entity.Appointments;
 import com.dietmunch.entity.Nutritionist;
 import com.dietmunch.entity.Users;
@@ -23,6 +24,8 @@ public class AppointmentController {
     @Autowired
     private AppointmentRpo appointmentRpo;
 
+    @Autowired
+    private AppointmentRpo A;
     @Autowired
     private UserRpo userRpo;
 
@@ -62,7 +65,33 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/get-appointment-uid")
+    @PostMapping("/update-appointments")
+    public ResponseEntity<StandardResponse> updateAppointments(@RequestBody AppointmentDTO appointmentDTO) {
+
+        try {
+            Nutritionist nutritionist = nutritionistRpo.getById(appointmentDTO.getNutritionistId());
+            Users user = userRpo.getById(appointmentDTO.getUserId());
+            Appointments appointmentsPreInfo = appointmentRpo.getById(appointmentDTO.getId());
+            //appointmentsPreInfo.setNutritionist(nutritionist);
+            appointmentsPreInfo.setBookingTime(appointmentDTO.getBookingTime());
+            appointmentsPreInfo.setBookingStatus(appointmentDTO.getBookingStatus());
+            appointmentsPreInfo.setBookingDay(appointmentDTO.getBookingDay());
+            //appointmentsPreInfo.setUser(user);
+
+            Appointments updatedData = appointmentRpo.save(appointmentsPreInfo);
+
+            return new ResponseEntity<>(
+                    new StandardResponse(200, "updated",updatedData ),
+                    HttpStatus.OK);
+
+        }catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+        @GetMapping("/get-appointment-uid")
     public ResponseEntity<StandardResponse> getAllUserAppointments(@RequestParam(value = "uid") int userId){
 
         List<Appointments> appointmentsList = appointmentRpo.getByUserId(userId);
@@ -72,3 +101,24 @@ public class AppointmentController {
                 HttpStatus.OK);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

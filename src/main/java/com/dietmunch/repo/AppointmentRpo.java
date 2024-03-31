@@ -13,4 +13,6 @@ import java.util.List;
 public interface AppointmentRpo extends JpaRepository<Appointments,Integer> {
 
     List<Appointments> getByUserId(int userId);
+
+    void deleteByUserId(int id);
 }

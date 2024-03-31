@@ -1,9 +1,18 @@
 package com.dietmunch.controller;
 
+import com.dietmunch.dto.AppointmentDTO;
 import com.dietmunch.dto.AuthUserDTO;
+import com.dietmunch.dto.UpdateUserDTO;
+import com.dietmunch.entity.Appointments;
+import com.dietmunch.entity.MealPlan;
+import com.dietmunch.entity.Nutritionist;
 import com.dietmunch.entity.Users;
+import com.dietmunch.repo.AppointmentRpo;
+import com.dietmunch.repo.MealPlanRpo;
+import com.dietmunch.repo.NutritionistRpo;
 import com.dietmunch.repo.UserRpo;
 import com.dietmunch.utill.StandardResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +28,15 @@ public class UserController {
 
     @Autowired
     private UserRpo userRepo;
+
+    @Autowired
+    private AppointmentRpo appointmentRpo;
+
+    @Autowired
+    private MealPlanRpo mealPlanRpo;
+
+    @Autowired
+    private NutritionistRpo nutritionistRpo;
 
     @PostMapping("/register-user")
     public ResponseEntity<StandardResponse> getUserInformation(@RequestBody Users user){
@@ -124,4 +142,59 @@ public class UserController {
                     HttpStatus.OK);
 //            return authUserList;
         }
+
+    @PostMapping("/update-user")
+    public ResponseEntity<StandardResponse> updateUser(@RequestBody UpdateUserDTO updateUserDTO) {
+
+
+        try {
+            Users userPreInfo = userRepo.getById(updateUserDTO.getId());
+            userPreInfo.setName(updateUserDTO.getName());
+            userPreInfo.setEmail(updateUserDTO.getEmail());
+            userPreInfo.setPwd(updateUserDTO.getPwd());
+            userPreInfo.setMobileNumber(updateUserDTO.getMobileNumber());
+            userPreInfo.setAddress(updateUserDTO.getAddress());
+            userPreInfo.setRole(updateUserDTO.getRole());
+            userPreInfo.setAge(updateUserDTO.getAge());
+
+
+            Users updatedData = userRepo.save(userPreInfo);
+
+            return new ResponseEntity<>(
+                    new StandardResponse(200, "User updated",updatedData ),
+                    HttpStatus.OK);
+
+        }catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    @Transactional
+    @DeleteMapping("/delete-user")
+    public ResponseEntity<StandardResponse> deleteUser(@RequestParam(value = "id") int id) {
+        try {
+            // Delete associated appointments
+            appointmentRpo.deleteByUserId(id);
+
+            // Delete associated meal plans
+            mealPlanRpo.deleteByUserId(id);
+
+            // Then delete the user
+            userRepo.deleteById(id);
+
+            return new ResponseEntity<>(
+                    new StandardResponse(200, "User deleted successfully", null),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(
+                    new StandardResponse(500, "Internal Server Error", null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
+
+

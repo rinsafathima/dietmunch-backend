@@ -14,6 +14,8 @@ import java.util.List;
 @EnableJpaRepositories
 public interface MealPlanRpo extends JpaRepository<MealPlan,Integer> {
     List<MealPlan> getByUserId(int userId);
+    void deleteByUserId(int userId);
+
 
 
 }
